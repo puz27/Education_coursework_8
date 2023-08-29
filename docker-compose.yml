@@ -4,12 +4,12 @@ services:
     image: postgres
     restart: always
     container_name: db_app
+#    env_file:
+#      - /app/.env
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=habits
-#    env_file:
-#      - .env
     volumes:
       - ./data/db/:/var/lib/postgresql/data
     ports:
@@ -27,20 +27,21 @@ services:
       - "6379:6379"
     volumes:
       - ./data/cache:/data
-#  app:
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile
-#    image: app
-#    container_name: app
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#      cache:
-#        condition: service_started
-#    ports:
-#      - "8000:8000"
-#    volumes:
-#        - ./app/:/app
-#    command:
-#      python manage.py runserver 0.0.0.0:8000
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: app
+    container_name: app
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    volumes:
+        - ./app/:/app/
+
+    command:
+      python manage.py runserver 0.0.0.0:8000
