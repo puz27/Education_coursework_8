@@ -33,6 +33,11 @@ services:
       dockerfile: ./Dockerfile
     image: app
     container_name: app
+    command: bash -c "
+      python manage.py migrate
+      && python manage.py prepare_users
+      && python manage.py runserver 0.0.0.0:8000
+      "
     depends_on:
       db:
         condition: service_healthy
@@ -43,5 +48,3 @@ services:
     volumes:
         - ./app/:/app/
 
-    command:
-      python manage.py runserver 0.0.0.0:8000
