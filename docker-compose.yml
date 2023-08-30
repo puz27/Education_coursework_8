@@ -1,15 +1,15 @@
 version: "2"
 services:
+
   db:
     image: postgres
     restart: always
     container_name: db_app
-#    env_file:
-#      - /app/.env
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=habits
+    env_file: /app/.env
+#    environment:
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+#      - POSTGRES_DB=habits
     volumes:
       - ./data/db/:/var/lib/postgresql/data
     ports:
@@ -19,6 +19,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   cache:
     image: redis:6.2-alpine
     container_name: redis_app
@@ -27,6 +28,7 @@ services:
       - "6379:6379"
     volumes:
       - ./data/cache:/data
+
   app:
     build:
       context: .
@@ -35,9 +37,9 @@ services:
     container_name: app
     command: bash -c "
       python manage.py migrate
-      && python manage.py prepare_users
       && python manage.py runserver 0.0.0.0:8000
       "
+#       && python manage.py prepare_users
     depends_on:
       db:
         condition: service_healthy
@@ -48,3 +50,32 @@ services:
     volumes:
         - ./app/:/app/
 
+  celery_worker:
+    image: app
+    container_name: celery_worker
+    env_file: /app/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_started
+      cache:
+        condition: service_started
+    volumes:
+      - ./app/:/app/
+    command: celery -A config worker -l INFO
+
+  celery_beat:
+    image: app
+    container_name: celery_beat
+    env_file: /app/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      app:
+        condition: service_started
+      cache:
+        condition: service_started
+    volumes:
+      - ./app/:/app/
+    command: celery -A config beat -l info -S django
