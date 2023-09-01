@@ -5,11 +5,11 @@ services:
     image: postgres
     restart: always
     container_name: db_app
-    env_file: /app/.env
-#    environment:
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PASSWORD=postgres
-#      - POSTGRES_DB=habits
+#    env_file: /app/.env
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=habits
     volumes:
       - ./data/db/:/var/lib/postgresql/data
     ports:
@@ -37,6 +37,7 @@ services:
     container_name: app
     command: bash -c "
       python manage.py migrate
+      && python manage.py prepare_users
       && python manage.py runserver 0.0.0.0:8000
       "
 #       && python manage.py prepare_users
