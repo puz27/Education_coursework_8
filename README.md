@@ -1,6 +1,4 @@
-Education_coursework_8" 
-
-## DJANGO-COMPOSE
+## DOCKER COMPOSE
 
 ## Prepare 
 * prepare /app/.env file (examples in /app/.env_sample)
