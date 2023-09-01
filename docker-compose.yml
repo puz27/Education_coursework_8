@@ -1,4 +1,4 @@
-version: "3.8"
+version: "2"
 services:
 
   db:
@@ -51,6 +51,7 @@ services:
 
   celery_worker:
     image: app
+    restart: always
     container_name: celery_worker
     env_file: /app/.env
     depends_on:
@@ -66,6 +67,7 @@ services:
 
   celery_beat:
     image: app
+    restart: always
     container_name: celery_beat
     env_file: /app/.env
     depends_on:
