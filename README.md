@@ -1,5 +1,6 @@
 ## DOCKER COMPOSE
-
+The project is being rolled on Docker.
+Allow to create habits scheduler and make notification to user telegram bot.
 ## Prepare 
 * prepare /app/.env file (examples in /app/.env_sample)
 ## Start service
